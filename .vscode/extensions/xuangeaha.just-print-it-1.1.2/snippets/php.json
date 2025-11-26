@@ -1,0 +1,9 @@
+{
+    "Just Print It": {
+        "prefix": "print",
+        "body": [
+            "echo \"${1}\";"
+        ],
+        "description": "Print a sentence."
+    }
+}

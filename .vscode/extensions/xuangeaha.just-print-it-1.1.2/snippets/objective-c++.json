@@ -1,0 +1,9 @@
+{
+    "Just Print It": {
+        "prefix": "print",
+        "body": [
+            "NSLog(@\"${1}\");"
+        ],
+        "description": "Print a sentence."
+    }
+}

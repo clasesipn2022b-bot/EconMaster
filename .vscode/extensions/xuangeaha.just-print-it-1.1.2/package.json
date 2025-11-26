@@ -1,0 +1,387 @@
+{
+	"name": "just-print-it",
+	"publisher": "XuangeAha",
+	"displayName": "Just Print It",
+	"description": "Print a sentence easily in your Python, Java, C, C++, PHP, C#, JavaScript, JavaScript JSX, TypeScript, TypeScript JSX, R, Go, Rust, Swift, Ruby, Objective-C, Objective-C++, Lua, Julia, Dart, Groovy, Visual Basic, CoffeeScript, VBScript, F#, Batch, Powershell, Perl, Perl 6, ShellScript, Clojure or Haskell files.",
+	"version": "1.1.2",
+	"license": "MIT",
+	"icon": "logo.png",
+	"author": {
+		"name": "XuangeAha"
+	},
+	"homepage": "https://github.com/Xuangeaha/Just-Print-It",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Xuangeaha/Just-Print-It"
+	},
+	"bugs": {
+		"url": "https://github.com/Xuangeaha/Just-Print-It/issues"
+	},
+	"galleryBanner": {
+		"color": "#c2e0a4",
+		"theme": "light"
+	},
+	"engines": {
+		"vscode": "^1.75.0"
+	},
+	"categories": [
+		"Azure",
+		"Data Science",
+		"Debuggers",
+		"Education",
+		"Formatters",
+		"Keymaps",
+		"Language Packs",
+		"Linters",
+		"Machine Learning",
+		"Notebooks",
+		"Programming Languages",
+		"SCM Providers",
+		"Snippets",
+		"Testing",
+		"Themes",
+		"Visualization",
+		"Extension Packs",
+		"Other"
+	],
+	"keywords": [
+		"divider",
+		"print",
+		"printf",
+		"pritln",
+		"code",
+		"coding",
+		"codings",
+		"py",
+		"python",
+		"jupyter",
+		"java",
+		"php",
+		"js",
+		"javascript",
+		"c",
+		"c++",
+		"c#",
+		"html",
+		"css",
+		"debug",
+		"debugger",
+		"debuggers",
+		"divide",
+		"git",
+		"github",
+		"vs",
+		"vscode",
+		"typescript",
+		"r",
+		"go",
+		"rust",
+		"swift",
+		"ruby",
+		"kotlin",
+		"objective",
+		"objectivec",
+		"objective-c",
+		"lua",
+		"julia",
+		"easy",
+		"lazy",
+		"div",
+		"all",
+		"language",
+		"languages",
+		"lan",
+		"lang",
+		"pro",
+		"program",
+		"programming",
+		"git",
+		"Git",
+		"productivity",
+		"repository",
+		"save",
+		"manage",
+		"management",
+		"github",
+		"gitlab",
+		"gitkraken",
+		"gitlen",
+		"gitlens",
+		"gitignore",
+		".gitignore",
+		"git-graph",
+		"cheatsheet",
+		"essential",
+		"py",
+		"python",
+		"jupyter",
+		"java",
+		"php",
+		"js",
+		"javascript",
+		"typescript",
+		"c",
+		"c++",
+		"c#",
+		"html",
+		"css",
+		"debug",
+		"debugger",
+		"debuggers",
+		"g",
+		"gi",
+		"git",
+		"just",
+		"enough",
+		"code",
+		"coding",
+		"codings",
+		"object",
+		"vscode",
+		"vs",
+		"main",
+		"origin",
+		"remote",
+		"rm",
+		"remove",
+		"push",
+		"pull",
+		"fetch",
+		"clone",
+		"pack",
+		"master",
+		"star",
+		"stars",
+		"issue",
+		"issues",
+		"project",
+		"projects",
+		"package",
+		"packages",
+		"tag",
+		"tags",
+		"asset",
+		"assets",
+		"wiki",
+		"wikis",
+		"tool",
+		"tools",
+		"branch",
+		"branches",
+		"request",
+		"requests",
+		"set",
+		"setting",
+		"settings",
+		"divider",
+		"print",
+		"code",
+		"coding",
+		"codings",
+		"py",
+		"python",
+		"jupyter",
+		"java",
+		"php",
+		"js",
+		"javascript",
+		"c",
+		"c++",
+		"c#",
+		"html",
+		"css",
+		"debug",
+		"debugger",
+		"debuggers",
+		"divide",
+		"git",
+		"github",
+		"vs",
+		"vscode",
+		"typescript",
+		"r",
+		"go",
+		"rust",
+		"swift",
+		"ruby",
+		"kotlin",
+		"objective",
+		"objectivec",
+		"objective-c",
+		"lua",
+		"julia",
+		"easy",
+		"lazy",
+		"div",
+		"all",
+		"language",
+		"languages",
+		"lan",
+		"lang",
+		"pro",
+		"program",
+		"programming"
+	],
+	"main": "./src/extension",
+	"activationEvents": [
+		"onCommand:just-print-it.print-it"
+	],
+	"contributes": {
+		"snippets": [
+			{
+				"language": "python",
+				"path": "./snippets/python.json"
+			},
+			{
+				"language": "java",
+				"path": "./snippets/java.json"
+			},
+			{
+				"language": "c",
+				"path": "./snippets/c.json"
+			},
+			{
+				"language": "php",
+				"path": "./snippets/php.json"
+			},
+			{
+				"language": "csharp",
+				"path": "./snippets/c#.json"
+			},
+			{
+				"language": "javascript",
+				"path": "./snippets/javascript.json"
+			},
+			{
+				"language": "typescript",
+				"path": "./snippets/typescript.json"
+			},
+			{
+				"language": "r",
+				"path": "./snippets/r.json"
+			},
+			{
+				"language": "go",
+				"path": "./snippets/go.json"
+			},
+			{
+				"language": "rust",
+				"path": "./snippets/rust.json"
+			},
+			{
+				"language": "swift",
+				"path": "./snippets/swift.json"
+			},
+			{
+				"language": "ruby",
+				"path": "./snippets/ruby.json"
+			},
+			{
+				"language": "objective-c",
+				"path": "./snippets/objective-c.json"
+			},
+			{
+				"language": "lua",
+				"path": "./snippets/lua.json"
+			},
+			{
+				"language": "julia",
+				"path": "./snippets/julia.json"
+			},
+			{
+				"language": "dart",
+				"path": "./snippets/dart.json"
+			},
+			{
+				"language": "groovy",
+				"path": "./snippets/groovy.json"
+			},
+			{
+				"language": "vb",
+				"path": "./snippets/visual-basic.json"
+			},
+			{
+				"language": "coffeescript",
+				"path": "./snippets/coffeescript.json"
+			},
+			{
+				"language": "vbs",
+				"path": "./snippets/vbscript.json"
+			},
+			{
+				"language": "fsharp",
+				"path": "./snippets/fsharp.json"
+			},
+			{
+				"language": "bat",
+				"path": "./snippets/batch.json"
+			},
+			{
+				"language": "powershell",
+				"path": "./snippets/powershell.json"
+			},
+			{
+				"language": "perl",
+				"path": "./snippets/perl.json"
+			},
+			{
+				"language": "clojure",
+				"path": "./snippets/clojure.json"
+			},
+			{
+				"language": "cpp",
+				"path": "./snippets/c++.json"
+			},
+			{
+				"language": "javascriptreact",
+				"path": "./snippets/javascript-jsx.json"
+			},
+			{
+				"language": "objective-cpp",
+				"path": "./snippets/objective-c++.json"
+			},
+			{
+				"language": "perl6",
+				"path": "./snippets/perl-6.json"
+			},
+			{
+				"language": "shellscript",
+				"path": "./snippets/shellscript.json"
+			},
+			{
+				"language": "typescriptreact",
+				"path": "./snippets/typescript-jsx.json"
+			}
+		],
+		"commands": [
+			{
+				"command": "just-print-it.print-it",
+				"title": "Print It",
+				"icon": "print.png"
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "just-print-it.print-it",
+					"group": "navigation",
+					"when": "editorTextFocus",
+					"title": "Print"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "just-print-it.print-it",
+					"group": "2_main",
+					"when": "editorTextFocus",
+					"title": "Print"
+				}
+			]
+		}
+	},
+	"__metadata": {
+		"installedTimestamp": 1764127677442,
+		"targetPlatform": "undefined",
+		"size": 43334
+	}
+}

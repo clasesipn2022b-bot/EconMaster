@@ -1,0 +1,43 @@
+{
+	"name": "nodejs-extension-pack",
+	"displayName": "Node.js Extension Pack",
+	"description": "Popular VS Code extensions for Node.js development.",
+	"version": "0.1.9",
+	"publisher": "waderyan",
+	"engines": {
+		"vscode": "^1.10.0"
+	},
+	"icon": "nodejs-dark-icon.png",
+	"galleryBanner": {
+		"color": "#333333",
+		"theme": "dark"
+	},
+	"keywords": [
+		"node",
+		"nodejs",
+		"javascript"
+	],
+	"categories": [
+		"Extension Packs"
+	],
+	"repository": {
+		"url": "https://github.com/waderyan/nodejs-extension-pack"
+	},
+	"homepage": "https://github.com/waderyan/nodejs-extension-pack",
+	"bugs": {
+		"url": "https://github.com/waderyan/nodejs-extension-pack/issues"
+	},
+	"extensionDependencies": [
+		"dbaeumer.vscode-eslint",
+		"xabikos.javascriptsnippets",
+		"jasonnutter.search-node-modules",
+		"eg2.vscode-npm-script",
+		"christian-kohler.npm-intellisense",
+		"christian-kohler.path-intellisense"
+	],
+	"__metadata": {
+		"installedTimestamp": 1764129934890,
+		"targetPlatform": "undefined",
+		"size": 11579
+	}
+}

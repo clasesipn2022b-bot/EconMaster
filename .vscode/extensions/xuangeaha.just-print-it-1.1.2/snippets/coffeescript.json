@@ -1,0 +1,9 @@
+{
+    "Just Print It": {
+        "prefix": "print",
+        "body": [
+          "console.log \"${1}\""
+        ],
+        "description": "Print a sentence."
+      }
+}
