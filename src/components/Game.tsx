@@ -10,6 +10,7 @@ interface GameProps {
 }
 
 export function Game({ onGameOver }: GameProps) {
+  // --- ESTADOS ---
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [isPaused, setIsPaused] = useState(false);
@@ -17,12 +18,15 @@ export function Game({ onGameOver }: GameProps) {
   const [items, setItems] = useState<GameTerm[]>([]);
   const [playerX, setPlayerX] = useState(50);
 
+  // --- SONIDOS ---
   const { playCollect, playError, playGameOver, isMuted, toggleMute } = useGameSounds();
   
+  // Refs
   const gameLoopRef = useRef<number>();
   const lastSpawnTime = useRef<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Movimiento del Jugador
   const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (isPaused || !containerRef.current) return;
     const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
@@ -32,9 +36,11 @@ export function Game({ onGameOver }: GameProps) {
     setPlayerX(xPercent);
   };
 
+  // Loop Principal
   const gameLoop = useCallback((time: number) => {
     if (isPaused) return;
 
+    // 1. Spawn
     const spawnRate = Math.max(500, 2000 - (level * 100));
     if (time - lastSpawnTime.current > spawnRate) {
       const isGood = Math.random() > 0.4;
@@ -52,6 +58,7 @@ export function Game({ onGameOver }: GameProps) {
       lastSpawnTime.current = time;
     }
 
+    // 2. Física y Colisiones
     setItems(prev => {
       const nextItems: GameTerm[] = [];
       let hitBad = false;
@@ -83,6 +90,7 @@ export function Game({ onGameOver }: GameProps) {
     gameLoopRef.current = requestAnimationFrame(gameLoop);
   }, [isPaused, level, playerX, playCollect, playError]);
 
+  // Efectos de control
   useEffect(() => {
     if (!isPaused) gameLoopRef.current = requestAnimationFrame(gameLoop);
     return () => { if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current); };
@@ -107,6 +115,7 @@ export function Game({ onGameOver }: GameProps) {
       onMouseMove={handleMouseMove}
       onTouchMove={handleMouseMove}
     >
+      {/* HUD Superior */}
       <div className="absolute top-0 w-full p-4 flex justify-between items-start z-50 text-white">
         <div className="flex gap-6">
           <div><p className="text-xs text-slate-400">PUNTOS</p><p className="text-2xl font-bold font-mono">{score}</p></div>
@@ -125,6 +134,7 @@ export function Game({ onGameOver }: GameProps) {
         </div>
       </div>
 
+      {/* Items */}
       {items.map(item => (
         <div key={item.id} className={`absolute px-3 py-1 rounded-full text-sm font-bold shadow-lg transform -translate-x-1/2
           ${item.type === 'good' ? 'bg-green-500 border-green-400' : 'bg-red-500 border-red-400'} text-white border-2`}
@@ -133,6 +143,7 @@ export function Game({ onGameOver }: GameProps) {
         </div>
       ))}
 
+      {/* Jugador */}
       <motion.div 
         className="absolute bottom-10 text-6xl filter drop-shadow-lg"
         style={{ left: `${playerX}%`, x: "-50%" }}
@@ -153,3 +164,6 @@ export function Game({ onGameOver }: GameProps) {
           <p className="text-slate-300 mt-2 text-sm uppercase tracking-wide">Toca para continuar</p>
         </div>
       )}
+    </div> // <--- ESTO ES LO QUE FALTABA
+  );
+}
