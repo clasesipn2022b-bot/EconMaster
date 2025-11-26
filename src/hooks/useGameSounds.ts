@@ -3,17 +3,47 @@ import { useState, useCallback } from 'react';
 export function useGameSounds() {
   const [isMuted, setIsMuted] = useState(false);
 
-  const playSound = useCallback((fileName: string, volume: number = 0.5) => {
+  // Función para generar un tono simple (Beep)
+  const playTone = useCallback((freq: number, type: OscillatorType, duration: number) => {
     if (isMuted) return;
-    // Asegúrate de que los archivos existan en la carpeta public/sounds/
-    const audio = new Audio(`/sounds/${fileName}`);
-    audio.volume = volume;
-    audio.play().catch(e => console.warn("Audio play failed", e));
+    
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContext) return;
+
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
   }, [isMuted]);
 
-  const playCollect = () => playSound('collect.mp3', 0.4);
-  const playError = () => playSound('error.mp3', 0.6);
-  const playGameOver = () => playSound('gameover.mp3', 0.7);
+  // Sonido de Moneda (Ding agudo)
+  const playCollect = useCallback(() => {
+    playTone(800, 'sine', 0.1);
+    setTimeout(() => playTone(1200, 'sine', 0.2), 50);
+  }, [playTone]);
+
+  // Sonido de Error (Buzz grave)
+  const playError = useCallback(() => {
+    playTone(150, 'sawtooth', 0.3);
+  }, [playTone]);
+
+  // Sonido Game Over (Melodía triste)
+  const playGameOver = useCallback(() => {
+    playTone(300, 'triangle', 0.2);
+    setTimeout(() => playTone(250, 'triangle', 0.2), 200);
+    setTimeout(() => playTone(200, 'triangle', 0.4), 400);
+  }, [playTone]);
 
   const toggleMute = () => setIsMuted(!isMuted);
 
