@@ -142,7 +142,14 @@ export function Game({ onGameOver }: GameProps) {
         🐷
       </motion.div>
       
-      {isPaused && <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center text-white text-4xl font-bold">PAUSA</div>}
-    </div>
-  );
-}
+      {/* Pantalla de Pausa - AHORA CON CLICK PARA CONTINUAR */}
+      {isPaused && (
+        <div 
+          onClick={() => setIsPaused(false)}
+          className="absolute inset-0 bg-black/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center cursor-pointer hover:bg-black/90 transition-colors"
+        >
+          <Play className="w-20 h-20 text-white mb-4 opacity-80" />
+          <h2 className="text-4xl text-white font-bold tracking-widest">PAUSA</h2>
+          <p className="text-slate-300 mt-2 text-sm uppercase tracking-wide">Toca para continuar</p>
+        </div>
+      )}
