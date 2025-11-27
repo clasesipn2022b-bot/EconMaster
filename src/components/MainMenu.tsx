@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Play, BookOpen, TrendingUp } from 'lucide-react';
+import { Play, BookOpen, TrendingUp, GraduationCap } from 'lucide-react'; // Agregamos GraduationCap
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 
@@ -13,7 +13,6 @@ export function MainMenu({ onStart }: MainMenuProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 overflow-hidden relative">
-      {/* Decoración de fondo */}
       <div className="absolute top-20 left-20 w-32 h-32 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" />
       <div className="absolute bottom-20 right-20 w-32 h-32 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" />
 
@@ -53,6 +52,21 @@ export function MainMenu({ onStart }: MainMenuProps) {
             >
               <BookOpen className="mr-2 w-5 h-5" /> {showInstructions ? 'Ocultar Reglas' : 'Cómo Jugar'}
             </Button>
+
+            {/* --- NUEVO BOTÓN ACADÉMICO --- */}
+            <a 
+              href="https://www.researchgate.net/profile/A-Ortiz-Ramirez" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block w-full"
+            >
+              <Button
+                variant="outline"
+                className="w-full h-12 border-2 border-blue-200 hover:bg-blue-50 text-blue-700 mt-2"
+              >
+                <GraduationCap className="mr-2 w-5 h-5" /> Conoce nuestro trabajo académico
+              </Button>
+            </a>
           </div>
 
           <motion.div

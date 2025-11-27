@@ -144,8 +144,8 @@ export function Game({ onGameOver }: GameProps) {
       ))}
 
       {/* Jugador */}
-      <motion.div 
-        className="absolute bottom-10 text-6xl filter drop-shadow-lg"
+<motion.div 
+        className="absolute bottom-24 text-6xl filter drop-shadow-lg" // CAMBIO: bottom-24 (antes bottom-10)
         style={{ left: `${playerX}%`, x: "-50%" }}
         animate={{ scale: [1, 1.1, 1], rotate: lives < 3 ? [0, -10, 10, 0] : 0 }}
         transition={{ duration: lives < 3 ? 0.2 : 1 }}

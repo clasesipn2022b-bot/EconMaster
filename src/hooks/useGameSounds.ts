@@ -17,7 +17,8 @@ export function useGameSounds() {
     osc.type = type;
     osc.frequency.setValueAtTime(freq, ctx.currentTime);
     
-    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    // CAMBIO: Aumentado de 0.1 a 0.5 para más volumen
+    gain.gain.setValueAtTime(0.5, ctx.currentTime); 
     gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
 
     osc.connect(gain);
@@ -27,18 +28,15 @@ export function useGameSounds() {
     osc.stop(ctx.currentTime + duration);
   }, [isMuted]);
 
-  // Sonido de Moneda (Ding agudo)
   const playCollect = useCallback(() => {
     playTone(800, 'sine', 0.1);
     setTimeout(() => playTone(1200, 'sine', 0.2), 50);
   }, [playTone]);
 
-  // Sonido de Error (Buzz grave)
   const playError = useCallback(() => {
     playTone(150, 'sawtooth', 0.3);
   }, [playTone]);
 
-  // Sonido Game Over (Melodía triste)
   const playGameOver = useCallback(() => {
     playTone(300, 'triangle', 0.2);
     setTimeout(() => playTone(250, 'triangle', 0.2), 200);
