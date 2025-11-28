@@ -1,7 +1,4 @@
 import { useState } from 'react';
-// Importamos los componentes. 
-// NOTA: Si tus componentes no están subidos aún, esto dará error en el siguiente paso,
-// pero vamos a arreglar primero el App.tsx.
 import { MainMenu } from './components/MainMenu';
 import { Game } from './components/Game';
 import { GameOver } from './components/GameOver';
@@ -26,7 +23,12 @@ export default function App() {
   return (
     <>
       {gameState === 'MENU' && <MainMenu onStart={startGame} />}
-      {gameState === 'PLAYING' && <Game onGameOver={handleGameOver} />}
+      
+      {/* AQUÍ ESTÁ EL CAMBIO: Agregamos onExit={goHome} */}
+      {gameState === 'PLAYING' && (
+        <Game onGameOver={handleGameOver} onExit={goHome} />
+      )}
+
       {gameState === 'GAME_OVER' && (
         <GameOver 
           finalScore={lastScore} 

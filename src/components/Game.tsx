@@ -1,16 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Pause, Play, Volume2, VolumeX } from 'lucide-react';
+// Agregamos el icono LogOut
+import { Heart, Pause, Play, Volume2, VolumeX, LogOut } from 'lucide-react';
 import { Button } from './ui/button';
 import { TERMS_DB, GameTerm } from '../data/gameData';
 import { useGameSounds } from '../hooks/useGameSounds';
 
 interface GameProps {
   onGameOver: (score: number, level: number) => void;
+  onExit: () => void; // Nueva prop para salir
 }
 
-export function Game({ onGameOver }: GameProps) {
-  // --- ESTADOS ---
+export function Game({ onGameOver, onExit }: GameProps) {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [isPaused, setIsPaused] = useState(false);
@@ -18,15 +19,12 @@ export function Game({ onGameOver }: GameProps) {
   const [items, setItems] = useState<GameTerm[]>([]);
   const [playerX, setPlayerX] = useState(50);
 
-  // --- SONIDOS ---
   const { playCollect, playError, playGameOver, isMuted, toggleMute } = useGameSounds();
   
-  // Refs
   const gameLoopRef = useRef<number>();
   const lastSpawnTime = useRef<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Movimiento del Jugador
   const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (isPaused || !containerRef.current) return;
     const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
@@ -36,11 +34,9 @@ export function Game({ onGameOver }: GameProps) {
     setPlayerX(xPercent);
   };
 
-  // Loop Principal
   const gameLoop = useCallback((time: number) => {
     if (isPaused) return;
 
-    // 1. Spawn
     const spawnRate = Math.max(500, 2000 - (level * 100));
     if (time - lastSpawnTime.current > spawnRate) {
       const isGood = Math.random() > 0.4;
@@ -58,7 +54,6 @@ export function Game({ onGameOver }: GameProps) {
       lastSpawnTime.current = time;
     }
 
-    // 2. Física y Colisiones
     setItems(prev => {
       const nextItems: GameTerm[] = [];
       let hitBad = false;
@@ -90,7 +85,6 @@ export function Game({ onGameOver }: GameProps) {
     gameLoopRef.current = requestAnimationFrame(gameLoop);
   }, [isPaused, level, playerX, playCollect, playError]);
 
-  // Efectos de control
   useEffect(() => {
     if (!isPaused) gameLoopRef.current = requestAnimationFrame(gameLoop);
     return () => { if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current); };
@@ -117,35 +111,56 @@ export function Game({ onGameOver }: GameProps) {
     >
       {/* HUD Superior */}
       <div className="absolute top-0 w-full p-4 flex justify-between items-start z-50 text-white">
-        <div className="flex gap-6">
-          <div><p className="text-xs text-slate-400">PUNTOS</p><p className="text-2xl font-bold font-mono">{score}</p></div>
-          <div><p className="text-xs text-slate-400">NIVEL</p><p className="text-2xl font-bold font-mono">{level}</p></div>
+        
+        {/* Puntos y Nivel */}
+        <div className="flex gap-4 md:gap-6">
+          <div><p className="text-[10px] md:text-xs text-slate-400">PUNTOS</p><p className="text-xl md:text-2xl font-bold font-mono">{score}</p></div>
+          <div><p className="text-[10px] md:text-xs text-slate-400">NIVEL</p><p className="text-xl md:text-2xl font-bold font-mono">{level}</p></div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex mr-4">{[...Array(3)].map((_, i) => (
+
+        {/* Botonera Derecha */}
+        <div className="flex items-center gap-1 md:gap-2">
+          {/* Vidas */}
+          <div className="hidden md:flex mr-2">{[...Array(3)].map((_, i) => (
             <Heart key={i} className={`w-6 h-6 ${i < lives ? 'fill-red-500 text-red-500' : 'text-slate-700'}`} />
           ))}</div>
-          <Button variant="ghost" size="icon" onClick={toggleMute} className="text-slate-400 hover:text-white">
-            {isMuted ? <VolumeX /> : <Volume2 />}
+          {/* Vidas Móvil (Número) */}
+          <div className="md:hidden flex items-center mr-2 text-red-500 font-bold">
+            <Heart className="w-5 h-5 fill-current mr-1" /> {lives}
+          </div>
+
+          <Button variant="ghost" size="icon" onClick={toggleMute} className="text-slate-400 hover:text-white h-8 w-8 md:h-10 md:w-10">
+            {isMuted ? <VolumeX className="h-4 w-4 md:h-5 md:w-5" /> : <Volume2 className="h-4 w-4 md:h-5 md:w-5" />}
           </Button>
-          <Button variant="outline" size="icon" onClick={() => setIsPaused(!isPaused)} className="bg-slate-800 text-white border-slate-700">
-            {isPaused ? <Play /> : <Pause />}
+          
+          <Button variant="outline" size="icon" onClick={() => setIsPaused(!isPaused)} className="bg-slate-800 text-white border-slate-700 h-8 w-8 md:h-10 md:w-10">
+            {isPaused ? <Play className="h-4 w-4 md:h-5 md:w-5" /> : <Pause className="h-4 w-4 md:h-5 md:w-5" />}
           </Button>
+
+          {/* --- BOTÓN DE SALIR (NUEVO) --- */}
+          <Button 
+            variant="destructive" 
+            size="icon" 
+            onClick={onExit} 
+            className="bg-red-600 hover:bg-red-700 text-white border-red-800 h-8 w-8 md:h-10 md:w-10 ml-1"
+            title="Salir del juego"
+          >
+            <LogOut className="h-4 w-4 md:h-5 md:w-5" />
+          </Button>
+
         </div>
       </div>
 
-      {/* Items */}
       {items.map(item => (
         <div key={item.id} className={`absolute px-3 py-1 rounded-full text-sm font-bold shadow-lg transform -translate-x-1/2
-          ${item.type === 'good' ? 'bg-green-500 border-green-400' : 'bg-red-500 border-red-400'} text-white border-2`}
+          ${item.type === 'good' ? 'bg-green-500 border-green-400' : 'bg-red-500 border-red-400'} text-white border-2 whitespace-nowrap`}
           style={{ left: `${item.x}%`, top: item.y }}>
           {item.text}
         </div>
       ))}
 
-      {/* Jugador */}
-<motion.div 
-        className="absolute bottom-24 text-6xl filter drop-shadow-lg" // CAMBIO: bottom-24 (antes bottom-10)
+      <motion.div 
+        className="absolute bottom-24 text-6xl filter drop-shadow-lg"
         style={{ left: `${playerX}%`, x: "-50%" }}
         animate={{ scale: [1, 1.1, 1], rotate: lives < 3 ? [0, -10, 10, 0] : 0 }}
         transition={{ duration: lives < 3 ? 0.2 : 1 }}
@@ -153,7 +168,6 @@ export function Game({ onGameOver }: GameProps) {
         🐷
       </motion.div>
       
-      {/* Pantalla de Pausa - AHORA CON CLICK PARA CONTINUAR */}
       {isPaused && (
         <div 
           onClick={() => setIsPaused(false)}
@@ -162,8 +176,19 @@ export function Game({ onGameOver }: GameProps) {
           <Play className="w-20 h-20 text-white mb-4 opacity-80" />
           <h2 className="text-4xl text-white font-bold tracking-widest">PAUSA</h2>
           <p className="text-slate-300 mt-2 text-sm uppercase tracking-wide">Toca para continuar</p>
+          
+          {/* Botón salir también en el menú de pausa */}
+          <Button 
+            onClick={(e) => {
+              e.stopPropagation(); // Evita que se quite la pausa al hacer clic aquí
+              onExit();
+            }}
+            className="mt-8 bg-red-600 hover:bg-red-700 text-white"
+          >
+            <LogOut className="mr-2 h-4 w-4" /> Salir al Menú
+          </Button>
         </div>
       )}
-    </div> // <--- ESTO ES LO QUE FALTABA
+    </div>
   );
 }
