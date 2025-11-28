@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Pause, Play, Volume2, VolumeX, LogOut, Lightbulb, CheckCircle2, GraduationCap, Trophy, PartyPopper } from 'lucide-react';
+import { Heart, Pause, Play, Volume2, VolumeX, LogOut, Lightbulb, CheckCircle2, GraduationCap, Trophy } from 'lucide-react';
 import { Button } from './ui/button';
 import { TERMS_DB, GameTerm } from '../data/gameData';
 import { useGameSounds } from '../hooks/useGameSounds';
@@ -75,7 +75,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
   // Modales
   const [showLevelModal, setShowLevelModal] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
-  const [showChampionModal, setShowChampionModal] = useState(false); // NUEVO
+  const [showChampionModal, setShowChampionModal] = useState(false);
   const [currentTip, setCurrentTip] = useState(LEVEL_UP_TIPS[0]);
 
   const { playCollect, playError, playGameOver, isMuted, toggleMute } = useGameSounds();
@@ -159,21 +159,16 @@ export function Game({ onGameOver, onExit }: GameProps) {
     return () => { if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current); };
   }, [isPaused, showLevelModal, showExitModal, showChampionModal, gameLoop]);
 
-  // --- LÓGICA DE SUBIDA DE NIVEL Y CAMPEÓN ---
   useEffect(() => {
     const newLevel = Math.floor(score / 1000) + 1;
     if (newLevel > level) {
       setLevel(newLevel);
-      
-      // Calculamos el índice exacto (Nivel 2 es el Tip 0)
       const tipIndex = newLevel - 2;
-
-      // Si ya mostramos los 50 tips, ¡Es Campeón!
       if (tipIndex >= LEVEL_UP_TIPS.length) {
         setShowChampionModal(true);
       } else {
-        // Si no, mostramos el siguiente tip
-        setCurrentTip(LEVEL_UP_TIPS[tipIndex]);
+        const safeIndex = tipIndex < 0 ? 0 : tipIndex;
+        setCurrentTip(LEVEL_UP_TIPS[safeIndex]);
         setShowLevelModal(true);
       }
     }
@@ -198,7 +193,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
       onMouseMove={handleMouseMove}
       onTouchMove={handleMouseMove}
     >
-      {/* HUD */}
+      {/* HUD Superior */}
       <div className="absolute top-0 w-full p-4 flex justify-between items-start z-50 pointer-events-none">
         <div className="flex gap-4 md:gap-8 pointer-events-auto bg-slate-800/90 p-3 rounded-xl border-2 border-slate-600 backdrop-blur-md shadow-2xl">
           <div><p className="text-[10px] md:text-xs text-slate-300 font-bold tracking-widest uppercase">Puntos</p><p className="text-xl md:text-3xl font-black font-mono text-white drop-shadow-lg">{score}</p></div>
@@ -216,8 +211,15 @@ export function Game({ onGameOver, onExit }: GameProps) {
         </div>
       </div>
 
+      {/* ITEMS: CORRECCIÓN DE TAMAÑO MÓVIL */}
       {items.map(item => (
-        <div key={item.id} className={`absolute px-4 py-2 rounded-full text-base md:text-xl font-bold shadow-[0_4px_0_rgba(0,0,0,0.2)] transform -translate-x-1/2 ${item.type === 'good' ? 'bg-green-500 border-2 border-white ring-2 ring-green-600' : 'bg-red-500 border-2 border-white ring-2 ring-red-600'} text-white whitespace-nowrap z-10`} style={{ left: `${item.x}%`, top: item.y }}>{item.text}</div>
+        <div key={item.id} 
+          className={`absolute px-2 py-1 md:px-4 md:py-2 rounded-lg md:rounded-full text-[10px] sm:text-xs md:text-xl font-bold shadow-lg transform -translate-x-1/2 flex items-center justify-center text-center
+          ${item.type === 'good' ? 'bg-green-500 border-2 border-white ring-1 md:ring-2 ring-green-600' : 'bg-red-500 border-2 border-white ring-1 md:ring-2 ring-red-600'} 
+          text-white z-10 whitespace-normal leading-tight max-w-[100px] md:max-w-none break-words`} 
+          style={{ left: `${item.x}%`, top: item.y }}>
+          {item.text}
+        </div>
       ))}
 
       <motion.div className="absolute bottom-24 text-7xl md:text-8xl filter drop-shadow-2xl z-20" style={{ left: `${playerX}%`, x: "-50%" }} animate={{ scale: [1, 1.1, 1], rotate: lives < 3 ? [0, -10, 10, 0] : 0 }} transition={{ duration: lives < 3 ? 0.2 : 1 }}>🐷</motion.div>
@@ -232,7 +234,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
         </div>
       )}
 
-      {/* 2. NIVEL COMPLETADO (Tips 1 al 50) */}
+      {/* 2. NIVEL COMPLETADO */}
       <AnimatePresence>
         {showLevelModal && (
           <div className="absolute inset-0 z-[70] flex items-center justify-center p-4 bg-black/80 backdrop-blur-lg">
@@ -255,11 +257,10 @@ export function Game({ onGameOver, onExit }: GameProps) {
         )}
       </AnimatePresence>
 
-      {/* 3. CAMPEÓN DEFINITIVO (Nivel 50+) */}
+      {/* 3. CAMPEÓN */}
       <AnimatePresence>
         {showChampionModal && (
           <div className="absolute inset-0 z-[90] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
-             {/* CONFETI SIMULADO CON PUNTOS DE COLORES */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               {[...Array(50)].map((_, i) => (
                 <div key={i} className="absolute w-3 h-3 rounded-full animate-pulse" 
@@ -270,28 +271,19 @@ export function Game({ onGameOver, onExit }: GameProps) {
                      }} />
               ))}
             </div>
-
             <motion.div initial={{ scale: 0.5, rotate: -10 }} animate={{ scale: 1, rotate: 0 }} className="bg-white w-full max-w-md rounded-3xl overflow-hidden border-4 border-yellow-500 shadow-[0_0_50px_rgba(255,215,0,0.5)]">
               <div className="bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 p-8 text-center text-white relative">
                 <Trophy className="w-24 h-24 mx-auto mb-4 text-yellow-100 drop-shadow-xl animate-bounce" />
                 <h2 className="text-3xl font-black uppercase tracking-tighter leading-none mb-2">¡FELICIDADES!</h2>
-                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm inline-block">
-                  <span className="text-4xl">🎉🥳🎊</span>
-                </div>
+                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm inline-block"><span className="text-4xl">🎉🥳🎊</span></div>
               </div>
-
               <div className="p-8 text-center bg-yellow-50">
                 <p className="text-gray-900 font-bold text-xl mb-4">Eres el...</p>
-                <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 uppercase border-2 border-orange-200 p-4 rounded-xl bg-white shadow-inner transform rotate-1">
-                  Campeón Definitivo de las Finanzas Personales
-                </h3>
+                <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 uppercase border-2 border-orange-200 p-4 rounded-xl bg-white shadow-inner transform rotate-1">Campeón Definitivo de las Finanzas Personales</h3>
                 <p className="text-gray-600 mt-6 font-medium">Has dominado los 50 conceptos clave.</p>
               </div>
-
               <div className="p-6 bg-white flex justify-center border-t-2 border-gray-100">
-                <Button onClick={onExit} className="w-full h-14 text-xl bg-blue-600 hover:bg-blue-500 text-white font-black shadow-lg rounded-xl">
-                  <GraduationCap className="mr-2 h-6 w-6" /> Recoger Diploma (Salir)
-                </Button>
+                <Button onClick={onExit} className="w-full h-14 text-xl bg-blue-600 hover:bg-blue-500 text-white font-black shadow-lg rounded-xl"><GraduationCap className="mr-2 h-6 w-6" /> Recoger Diploma (Salir)</Button>
               </div>
             </motion.div>
           </div>
