@@ -26,6 +26,7 @@ const LEVEL_UP_TIPS = [
     source: "Fuente: Seguridad Financiera"
   }
 ];
+export default LEVEL_UP_TIPS;
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'; // Asegúrate de importar AnimatePresence
 import { Heart, Pause, Play, Volume2, VolumeX, LogOut, Lightbulb, CheckCircle2 } from 'lucide-react';
