@@ -1,60 +1,32 @@
-// Tips financieros basados en el documento de Inclusión Financiera 
-const LEVEL_UP_TIPS = [
-  { 
-    title: "📱 ¡Tu cel es tu banco!", 
-    text: "El 87% de los jóvenes ya usan apps para sus finanzas. ¡Aprovecha la tecnología para controlar tus gastos!",
-    source: "Fuente: ENIF 2024"
-  },
-  { 
-    title: "🛡️ Dinero Seguro", 
-    text: "Tus ahorros en instituciones formales están protegidos por ley. ¡Mucho más seguro que bajo el colchón!",
-    source: "Fuente: Protección al Ahorro"
-  },
-  { 
-    title: "👣 Tu Huella Cuenta", 
-    text: "La Inteligencia Artificial puede ayudarte a tener crédito si tienes buen comportamiento digital. ¡Cuida tu historial!",
-    source: "Fuente: Transformación FinTech"
-  },
-  { 
-    title: "💳 Menos Efectivo", 
-    text: "El 85% de compras pequeñas son en efectivo, pero los pagos digitales te ayudan a saber en qué se te va el dinero.",
-    source: "Fuente: Hábitos de Pago"
-  },
-  { 
-    title: "👁️ Ojo con el Fraude", 
-    text: "La desconfianza frena tu crecimiento. Aprende sobre seguridad digital y protege tus datos personales.",
-    source: "Fuente: Seguridad Financiera"
-  }
-];
-export default LEVEL_UP_TIPS;
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'; // Asegúrate de importar AnimatePresence
+import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Pause, Play, Volume2, VolumeX, LogOut, Lightbulb, CheckCircle2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { TERMS_DB, GameTerm } from '../data/gameData';
 import { useGameSounds } from '../hooks/useGameSounds';
 
-// --- NUEVO: TIPS FINANCIEROS ---
+// --- AQUÍ ESTÁ LA LISTA DE TIPS (FUERA DE LA FUNCIÓN) ---
+// Estos datos provienen de tu documento sobre Inclusión Financiera en México
 const LEVEL_UP_TIPS = [
   { 
     title: "📱 ¡Tu cel es tu banco!", 
-    text: "El 87% de los jóvenes ya usan apps para sus finanzas. ¡Aprovecha la tecnología para controlar tus gastos!",
+    text: "El 87% de los jóvenes ya usan apps para sus finanzas. ¡Aprovecha la tecnología para controlar tus gastos!", // [cite: 26]
   },
   { 
     title: "🛡️ Dinero Seguro", 
-    text: "¿Sabías que solo 3 de cada 10 saben que sus ahorros están protegidos?[cite: 42]. ¡En el banco tu dinero no se pierde!",
+    text: "¿Sabías que solo 3 de cada 10 saben que sus ahorros están protegidos? ¡En el banco tu dinero no se pierde!", // [cite: 42]
   },
   { 
     title: "👣 Tu Huella Cuenta", 
-    text: "Hoy en día, la IA analiza tus datos digitales para darte crédito[cite: 164]. ¡Paga tus servicios a tiempo!",
+    text: "Hoy en día, la IA analiza tus datos digitales para darte crédito. ¡Paga tus servicios a tiempo!", // [cite: 164]
   },
   { 
     title: "💳 Controla tus Gastos", 
-    text: "El 85% de compras pequeñas son en efectivo, lo que hace difícil rastrearlas. ¡Usa pagos digitales!",
+    text: "El 85% de compras pequeñas son en efectivo, lo que hace difícil rastrearlas. ¡Usa pagos digitales!", // [cite: 33]
   },
   { 
-    title: "🧠 Educación es Poder", 
-    text: "La educación financiera no es solo saber sumar, es entender cómo el dinero afecta tu bienestar[cite: 216].",
+    title: "🧠 Salud Financiera", 
+    text: "Las finanzas no son solo números, también afectan tu bienestar y salud mental. ¡Cuida tu paz mental!", // [cite: 215]
   }
 ];
 
@@ -63,6 +35,7 @@ interface GameProps {
   onExit: () => void;
 }
 
+// --- AQUÍ EMPIEZA LA FUNCIÓN DEL JUEGO ---
 export function Game({ onGameOver, onExit }: GameProps) {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
@@ -71,7 +44,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
   const [items, setItems] = useState<GameTerm[]>([]);
   const [playerX, setPlayerX] = useState(50);
   
-  // --- NUEVO: ESTADOS PARA EL MODAL DE NIVEL ---
+  // Estados para el Modal de Nivel
   const [showLevelModal, setShowLevelModal] = useState(false);
   const [currentTip, setCurrentTip] = useState(LEVEL_UP_TIPS[0]);
 
@@ -82,7 +55,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (isPaused || showLevelModal || !containerRef.current) return; // Bloquear si hay modal
+    if (isPaused || showLevelModal || !containerRef.current) return;
     const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
     const rect = containerRef.current.getBoundingClientRect();
     let xPercent = ((clientX - rect.left) / rect.width) * 100;
@@ -91,7 +64,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
   };
 
   const gameLoop = useCallback((time: number) => {
-    if (isPaused || showLevelModal) return; // Detener loop si hay modal
+    if (isPaused || showLevelModal) return;
 
     const spawnRate = Math.max(500, 2000 - (level * 100));
     if (time - lastSpawnTime.current > spawnRate) {
@@ -139,7 +112,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
     });
 
     gameLoopRef.current = requestAnimationFrame(gameLoop);
-  }, [isPaused, showLevelModal, level, playerX, playCollect, playError]); // Agregamos showLevelModal a dependencias
+  }, [isPaused, showLevelModal, level, playerX, playCollect, playError]);
 
   useEffect(() => {
     if (!isPaused && !showLevelModal) {
@@ -148,12 +121,11 @@ export function Game({ onGameOver, onExit }: GameProps) {
     return () => { if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current); };
   }, [isPaused, showLevelModal, gameLoop]);
 
-  // --- NUEVO: LÓGICA DE SUBIDA DE NIVEL ---
+  // Lógica de Subida de Nivel y Selección de Tip
   useEffect(() => {
     const newLevel = Math.floor(score / 1000) + 1;
     if (newLevel > level) {
       setLevel(newLevel);
-      // Pausar y mostrar tip
       const randomTip = LEVEL_UP_TIPS[Math.floor(Math.random() * LEVEL_UP_TIPS.length)];
       setCurrentTip(randomTip);
       setShowLevelModal(true);
@@ -174,7 +146,6 @@ export function Game({ onGameOver, onExit }: GameProps) {
       onMouseMove={handleMouseMove}
       onTouchMove={handleMouseMove}
     >
-      {/* HUD Superior */}
       <div className="absolute top-0 w-full p-4 flex justify-between items-start z-50 text-white">
         <div className="flex gap-4 md:gap-6">
           <div><p className="text-[10px] md:text-xs text-slate-400">PUNTOS</p><p className="text-xl md:text-2xl font-bold font-mono">{score}</p></div>
@@ -197,12 +168,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
             {isPaused ? <Play className="h-4 w-4 md:h-5 md:w-5" /> : <Pause className="h-4 w-4 md:h-5 md:w-5" />}
           </Button>
 
-          <Button 
-            variant="destructive" 
-            size="icon" 
-            onClick={onExit} 
-            className="bg-red-600 hover:bg-red-700 text-white border-red-800 h-8 w-8 md:h-10 md:w-10 ml-1"
-          >
+          <Button variant="destructive" size="icon" onClick={onExit} className="bg-red-600 hover:bg-red-700 text-white border-red-800 h-8 w-8 md:h-10 md:w-10 ml-1">
             <LogOut className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
         </div>
@@ -225,7 +191,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
         🐷
       </motion.div>
       
-      {/* Pantalla de Pausa */}
+      {/* Pausa */}
       {isPaused && !showLevelModal && (
         <div 
           onClick={() => setIsPaused(false)}
@@ -240,7 +206,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
         </div>
       )}
 
-      {/* --- NUEVO: MODAL DE NIVEL COMPLETADO (Estilo Mexicano) --- */}
+      {/* MODAL DE NIVEL COMPLETADO */}
       <AnimatePresence>
         {showLevelModal && (
           <div className="absolute inset-0 z-[70] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
@@ -250,14 +216,12 @@ export function Game({ onGameOver, onExit }: GameProps) {
               exit={{ scale: 0.5, opacity: 0 }}
               className="bg-white w-full max-w-md rounded-2xl overflow-hidden border-4 border-yellow-400 shadow-2xl"
             >
-              {/* Encabezado Festivo */}
               <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-6 text-center text-white relative overflow-hidden">
                 <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, #fff 2px, transparent 2px)', backgroundSize: '20px 20px' }} />
                 <h2 className="text-3xl font-extrabold mb-1">¡NIVEL {level}!</h2>
                 <p className="text-yellow-200 font-medium">¡Sigue así, vas muy bien!</p>
               </div>
 
-              {/* Contenido del Tip */}
               <div className="p-6 bg-yellow-50">
                 <div className="flex items-start gap-4">
                   <div className="bg-yellow-200 p-3 rounded-full text-yellow-700 shrink-0">
@@ -270,7 +234,6 @@ export function Game({ onGameOver, onExit }: GameProps) {
                 </div>
               </div>
 
-              {/* Botón Continuar */}
               <div className="p-4 bg-gray-50 flex justify-center">
                 <Button 
                   onClick={() => setShowLevelModal(false)}
