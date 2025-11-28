@@ -1,14 +1,37 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
-// Agregamos el icono LogOut
-import { Heart, Pause, Play, Volume2, VolumeX, LogOut } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, Pause, Play, Volume2, VolumeX, LogOut, Lightbulb, CheckCircle2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { TERMS_DB, GameTerm } from '../data/gameData';
 import { useGameSounds } from '../hooks/useGameSounds';
 
+// --- TIPS FINANCIEROS ---
+const LEVEL_UP_TIPS = [
+  { 
+    title: "📱 ¡Tu cel es tu banco!", 
+    text: "El 87% de los jóvenes ya usan apps para sus finanzas. ¡Aprovecha la tecnología para controlar tus gastos!",
+  },
+  { 
+    title: "🛡️ Dinero Seguro", 
+    text: "¿Sabías que solo 3 de cada 10 saben que sus ahorros están protegidos? ¡En el banco tu dinero no se pierde!",
+  },
+  { 
+    title: "👣 Tu Huella Cuenta", 
+    text: "Hoy en día, la IA analiza tus datos digitales para darte crédito. ¡Paga tus servicios a tiempo!",
+  },
+  { 
+    title: "💳 Controla tus Gastos", 
+    text: "El 85% de compras pequeñas son en efectivo, lo que hace difícil rastrearlas. ¡Usa pagos digitales!",
+  },
+  { 
+    title: "🧠 Salud Financiera", 
+    text: "Las finanzas no son solo números, también afectan tu bienestar y salud mental. ¡Cuida tu paz mental!",
+  }
+];
+
 interface GameProps {
   onGameOver: (score: number, level: number) => void;
-  onExit: () => void; // Nueva prop para salir
+  onExit: () => void;
 }
 
 export function Game({ onGameOver, onExit }: GameProps) {
@@ -18,6 +41,10 @@ export function Game({ onGameOver, onExit }: GameProps) {
   const [level, setLevel] = useState(1);
   const [items, setItems] = useState<GameTerm[]>([]);
   const [playerX, setPlayerX] = useState(50);
+  
+  // Estados para el Modal de Nivel
+  const [showLevelModal, setShowLevelModal] = useState(false);
+  const [currentTip, setCurrentTip] = useState(LEVEL_UP_TIPS[0]);
 
   const { playCollect, playError, playGameOver, isMuted, toggleMute } = useGameSounds();
   
@@ -26,7 +53,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (isPaused || !containerRef.current) return;
+    if (isPaused || showLevelModal || !containerRef.current) return;
     const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
     const rect = containerRef.current.getBoundingClientRect();
     let xPercent = ((clientX - rect.left) / rect.width) * 100;
@@ -35,7 +62,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
   };
 
   const gameLoop = useCallback((time: number) => {
-    if (isPaused) return;
+    if (isPaused || showLevelModal) return;
 
     const spawnRate = Math.max(500, 2000 - (level * 100));
     if (time - lastSpawnTime.current > spawnRate) {
@@ -83,16 +110,23 @@ export function Game({ onGameOver, onExit }: GameProps) {
     });
 
     gameLoopRef.current = requestAnimationFrame(gameLoop);
-  }, [isPaused, level, playerX, playCollect, playError]);
+  }, [isPaused, showLevelModal, level, playerX, playCollect, playError]);
 
   useEffect(() => {
-    if (!isPaused) gameLoopRef.current = requestAnimationFrame(gameLoop);
+    if (!isPaused && !showLevelModal) {
+      gameLoopRef.current = requestAnimationFrame(gameLoop);
+    }
     return () => { if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current); };
-  }, [isPaused, gameLoop]);
+  }, [isPaused, showLevelModal, gameLoop]);
 
   useEffect(() => {
     const newLevel = Math.floor(score / 1000) + 1;
-    if (newLevel > level) setLevel(newLevel);
+    if (newLevel > level) {
+      setLevel(newLevel);
+      const randomTip = LEVEL_UP_TIPS[Math.floor(Math.random() * LEVEL_UP_TIPS.length)];
+      setCurrentTip(randomTip);
+      setShowLevelModal(true);
+    }
   }, [score, level]);
 
   useEffect(() => {
@@ -110,85 +144,7 @@ export function Game({ onGameOver, onExit }: GameProps) {
       onTouchMove={handleMouseMove}
     >
       {/* HUD Superior */}
-      <div className="absolute top-0 w-full p-4 flex justify-between items-start z-50 text-white">
-        
-        {/* Puntos y Nivel */}
-        <div className="flex gap-4 md:gap-6">
-          <div><p className="text-[10px] md:text-xs text-slate-400">PUNTOS</p><p className="text-xl md:text-2xl font-bold font-mono">{score}</p></div>
-          <div><p className="text-[10px] md:text-xs text-slate-400">NIVEL</p><p className="text-xl md:text-2xl font-bold font-mono">{level}</p></div>
-        </div>
-
-        {/* Botonera Derecha */}
-        <div className="flex items-center gap-1 md:gap-2">
-          {/* Vidas */}
-          <div className="hidden md:flex mr-2">{[...Array(3)].map((_, i) => (
-            <Heart key={i} className={`w-6 h-6 ${i < lives ? 'fill-red-500 text-red-500' : 'text-slate-700'}`} />
-          ))}</div>
-          {/* Vidas Móvil (Número) */}
-          <div className="md:hidden flex items-center mr-2 text-red-500 font-bold">
-            <Heart className="w-5 h-5 fill-current mr-1" /> {lives}
-          </div>
-
-          <Button variant="ghost" size="icon" onClick={toggleMute} className="text-slate-400 hover:text-white h-8 w-8 md:h-10 md:w-10">
-            {isMuted ? <VolumeX className="h-4 w-4 md:h-5 md:w-5" /> : <Volume2 className="h-4 w-4 md:h-5 md:w-5" />}
-          </Button>
-          
-          <Button variant="outline" size="icon" onClick={() => setIsPaused(!isPaused)} className="bg-slate-800 text-white border-slate-700 h-8 w-8 md:h-10 md:w-10">
-            {isPaused ? <Play className="h-4 w-4 md:h-5 md:w-5" /> : <Pause className="h-4 w-4 md:h-5 md:w-5" />}
-          </Button>
-
-          {/* --- BOTÓN DE SALIR (NUEVO) --- */}
-          <Button 
-            variant="destructive" 
-            size="icon" 
-            onClick={onExit} 
-            className="bg-red-600 hover:bg-red-700 text-white border-red-800 h-8 w-8 md:h-10 md:w-10 ml-1"
-            title="Salir del juego"
-          >
-            <LogOut className="h-4 w-4 md:h-5 md:w-5" />
-          </Button>
-
-        </div>
-      </div>
-
-      {items.map(item => (
-        <div key={item.id} className={`absolute px-3 py-1 rounded-full text-sm font-bold shadow-lg transform -translate-x-1/2
-          ${item.type === 'good' ? 'bg-green-500 border-green-400' : 'bg-red-500 border-red-400'} text-white border-2 whitespace-nowrap`}
-          style={{ left: `${item.x}%`, top: item.y }}>
-          {item.text}
-        </div>
-      ))}
-
-      <motion.div 
-        className="absolute bottom-24 text-6xl filter drop-shadow-lg"
-        style={{ left: `${playerX}%`, x: "-50%" }}
-        animate={{ scale: [1, 1.1, 1], rotate: lives < 3 ? [0, -10, 10, 0] : 0 }}
-        transition={{ duration: lives < 3 ? 0.2 : 1 }}
-      >
-        🐷
-      </motion.div>
-      
-      {isPaused && (
-        <div 
-          onClick={() => setIsPaused(false)}
-          className="absolute inset-0 bg-black/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center cursor-pointer hover:bg-black/90 transition-colors"
-        >
-          <Play className="w-20 h-20 text-white mb-4 opacity-80" />
-          <h2 className="text-4xl text-white font-bold tracking-widest">PAUSA</h2>
-          <p className="text-slate-300 mt-2 text-sm uppercase tracking-wide">Toca para continuar</p>
-          
-          {/* Botón salir también en el menú de pausa */}
-          <Button 
-            onClick={(e) => {
-              e.stopPropagation(); // Evita que se quite la pausa al hacer clic aquí
-              onExit();
-            }}
-            className="mt-8 bg-red-600 hover:bg-red-700 text-white"
-          >
-            <LogOut className="mr-2 h-4 w-4" /> Salir al Menú
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-}
+      <div className="absolute top-0 w-full p-4 flex justify-between items-start z-50 pointer-events-none">
+        {/* Lado Izquierdo: Puntos */}
+        <div className="flex gap-4 md:gap-8 pointer-events-auto bg-slate-800/80 p-3 rounded-xl border-2 border-slate-600 backdrop-blur-sm">
+          <div><p className="text-[10px] md:text-sm text-slate-3
