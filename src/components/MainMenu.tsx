@@ -79,6 +79,9 @@ export function MainMenu({ onStart }: MainMenuProps) {
                 <Play className="mr-2 w-6 h-6 fill-current" /> Jugar EconMaster
               </Button>
 
+              {/* --- BOTÓN PIÑATAS OCULTO TEMPORALMENTE ---
+                 Para reactivarlo, solo borra las llaves y asteriscos que lo envuelven: { /* ... * / }
+              
               <a href="https://TU_URL_DE_PIÑATAS.com" target="_blank" rel="noopener noreferrer" className="block w-full">
                 <Button
                   className="w-full h-12 text-lg font-bold bg-cyan-500 hover:bg-cyan-600 text-white shadow-md border-b-4 border-cyan-700 active:border-b-0 active:translate-y-1 transition-all rounded-xl"
@@ -86,6 +89,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
                   <PartyPopper className="mr-2 w-6 h-6" /> Jugar "Piñatas de la Economía"
                 </Button>
               </a>
+              */}
 
               <Button
                 onClick={() => setShowInstructions(!showInstructions)}
